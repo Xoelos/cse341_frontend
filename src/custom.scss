@@ -1,0 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Cousine:ital,wght@0,400;0,700;1,400;1,700&family=Open+Sans:wght@400;600;800&family=Proza+Libre:ital,wght@0,400;0,600;1,400;1,500;1,800&display=swap');
+$base: 'Open Sans', sans-serif;
+$header: 'Proza Libre', sans-serif;
+
+$font-family-base: $base;
+$headings-font-family: $header;
+
+
+$theme-colors: (
+        "primary": #6B2B06,
+        "secondary": #B7B5B3,
+        "warning": #B80C09,
+        "info": #0D3B66,
+        "light": #E5E7E6,
+        "dark": #39393A,
+        "black": #141301,
+        "white": #FFFFFF,
+);
+
+@import "~bootstrap/scss/bootstrap";
