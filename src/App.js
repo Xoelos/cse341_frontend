@@ -1,78 +1,106 @@
-import React, {Component} from 'react';
-import {BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
-import logo from './assets/logo.png';
+import React, {Component, createRef} from 'react';
+import {BrowserRouter as Router, Redirect, Route, Switch} from "react-router-dom";
+import Toaster from './components/toaster';
+import logo from './assets/cards.png';
 
 // SCSS
 import './App.scss';
 
+// Middleware
+import PrivateRoute from "./middleware/PrivateRoute";
+import PublicRoute from "./middleware/PublicRoute";
+import Auth from "./middleware/Auth";
+import OnLoad from "./middleware/OnLoad";
+
 // Components
+import About from './views/About/About';
 import Home from './views/Home/Home';
 import Login from "./views/Login/Login";
 import Register from "./views/Register/Register";
 
 // Bootstrap
 import Navbar from "react-bootstrap/Navbar";
-import NavbarBrand from "react-bootstrap/NavbarBrand";
 import NavbarCollapse from "react-bootstrap/NavbarCollapse";
 import NavbarToggle from "react-bootstrap/NavbarToggle";
 import Nav from "react-bootstrap/Nav";
 import NavLink from "react-bootstrap/NavLink";
 import Container from "react-bootstrap/Container";
 import Image from "react-bootstrap/Image";
-import Toast from "react-bootstrap/Toast";
-import ToastHeader from "react-bootstrap/ToastHeader";
-import ToastBody from "react-bootstrap/ToastBody";
 import {LinkContainer} from 'react-router-bootstrap';
-
-// Font Awesome Icons
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCheck, faExclamationCircle } from '@fortawesome/free-solid-svg-icons';
+import {NavbarBrand} from "react-bootstrap";
 
 class App extends Component {
     constructor(props) {
         super(props);
-
         this.state = {
-            show: false,
-            title: '',
-            message: '',
-            variety: ''
+            redirect: false,
+            redirectRoute: '/home',
+            authed: false,
+            token: null,
+            user: {}
         }
-
-        this.toast = this.toast.bind(this);
+        this.toaster = createRef();
     }
 
-    toast(show, title, message, variety) {
-        this.setState({show, title, message, variety});
+    componentDidMount() {
+        const user = OnLoad.getUser(this.toast);
+        if (user)
+            user.then(res => this.setState(OnLoad.res(res))).catch(err => this.setState(OnLoad.err(err, this.toast)))
+    }
+
+    login = (user) => {
+        Auth.login(user).then(res => this.setState(Auth.res(res))).catch(err => this.setState(Auth.err(err, this.toast)));
+    }
+
+    register = (user) => {
+        Auth.register(user).then(res => this.setState(Auth.res(res))).catch(err => this.setState(Auth.err(err, this.toast)));
+    }
+
+    logout = () => {
+        this.setState(Auth.logout());
+    }
+
+    toast = (toast) => {
+        this.toaster.current.toast(toast);
     }
 
     render() {
-
-        let faIcon = null;
-
-        switch (this.state.variety){
-            case "success":
-                faIcon = <FontAwesomeIcon icon={ faCheck } className={ `ml-auto success` } />;
-                break;
-            case "danger":
-                faIcon = <FontAwesomeIcon icon={ faExclamationCircle } className={ `ml-auto danger` } />;
-                break;
-        }
+        let authed = this.state.authed;
+        let redirectElement = this.state.redirect
+            ? <Redirect to={this.state.redirectRoute}/>
+            : null;
 
         return (
             <Router>
+                {/* Redirect Catch */}
+                {redirectElement}
                 {/* Navbar */}
                 <Navbar bg="dark" variant="dark" expand="md" id="nav">
                     <NavbarBrand>
-                        <Link to="/home">
-                            <Image src={logo} id="icon"/>
-                        </Link>
+                        <LinkContainer to='home'>
+                            <NavLink>
+                                <Image src={logo} id="icon"/>
+                            </NavLink>
+                        </LinkContainer>
                     </NavbarBrand>
-                    <NavbarToggle/>
-                    <NavbarCollapse className="justify-content-end">
-                        <Nav>
-                            <LinkContainer to="/login"><NavLink>Login</NavLink></LinkContainer>
-                            <LinkContainer to="/register"><NavLink>Register</NavLink></LinkContainer>
+                    <NavbarToggle className="py-2"/>
+                    <NavbarCollapse className="lead">
+                        <Nav className="w-100">
+                            <span className="mr-auto flex-grow-1 ">
+                                <LinkContainer to="/about"
+                                               className="ml-0 ml-md-5 my-auto"><NavLink>About</NavLink></LinkContainer>
+                            </span>
+                            {authed ? (
+                                <span onClick={this.logout}>
+                                    <NavLink className="my-auto">Logout</NavLink>
+                                </span>
+                            ) : (<>
+                                    <LinkContainer to="/login"><NavLink
+                                        className="my-auto">Login</NavLink></LinkContainer>
+                                    <LinkContainer to="/register"><NavLink
+                                        className="my-auto">Register</NavLink></LinkContainer>
+                                </>
+                            )}
                         </Nav>
                     </NavbarCollapse>
                 </Navbar>
@@ -80,28 +108,27 @@ class App extends Component {
                 <Switch>
                     <React.Fragment>
                         <Container className="mt-5" fluid>
-                            <Route path="/home">
-                                <Home toast={this.toast}/>
+                            <Route exact path="/about">
+                                <About/>
                             </Route>
-                            <Route path="/login">
-                                <Login toast={this.toast}/>
-                            </Route>
-                            <Route path="/register">
-                                <Register toast={this.toast}/>
-                            </Route>
+                            <PublicRoute exact path='/login'
+                                         component={Login}
+                                         authed={this.state.authed}
+                                         login={this.login}
+                                         register={this.register}
+                            />
+                            <PublicRoute exact path='/register'
+                                         component={Register}
+                                         authed={this.state.authed}
+                                         login={this.login}
+                                         register={this.register}
+                            />
+                            <PrivateRoute exact path={['/home', '/']} component={Home} authed={this.state.authed}
+                                          toast={this.toast} userId={this.state.user.id}/>
                         </Container>
                     </React.Fragment>
                 </Switch>
-                {/* Toaster */}
-                <Toast show={ this.state.show } onClose={(e) => { this.toast(false) }} id='toast' className={ this.state.variety }>
-                    <ToastHeader closeButton={false} >
-                        { this.state.title }
-                        { faIcon }
-                    </ToastHeader>
-                    <ToastBody>
-                        { this.state.message }
-                    </ToastBody>
-                </Toast>
+                <Toaster ref={this.toaster}/>
             </Router>
         );
     }

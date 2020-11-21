@@ -1,4 +1,4 @@
-class UserModel {
+export default class UserModel {
     firstName;
     lastName;
     email;

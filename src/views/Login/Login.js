@@ -1,11 +1,8 @@
-import React from "react";
-import { Component } from "react";
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
 
 // SCSS
 import './Login.scss';
-
-// Axios
-import axios from "axios";
 
 // Bootstrap
 import Row from "react-bootstrap/Row";
@@ -19,24 +16,51 @@ import Button from "react-bootstrap/Button";
 class Login extends Component {
     constructor(props) {
         super(props);
+
+        this.state = {
+            email: '',
+            password: ''
+        }
+    }
+
+    change = (e) => {
+        const name = e.target.name;
+        const value = e.target.value;
+        this.setState({[name]: value});
+    }
+
+    login = () => {
+        this.setState(prev => ({ ...prev, password: '' }));
+        this.props.login(this.state);
     }
 
     render() {
-        return(
+        return (
             <Row>
                 <Col xs="12" md="6" lg="4" className="offset-md-3 offset-lg-4">
                     <h1 align="center" className="mb-5">Login</h1>
                     <Form>
-                        <FormGroup controlId="formBasicEmail">
+                        <FormGroup>
                             <FormLabel>Email address</FormLabel>
-                            <FormControl type="email" placeholder="Enter email" />
+                            <FormControl
+                                type="email"
+                                name="email"
+                                placeholder="Enter email"
+                                value={this.state.email}
+                                onChange={this.change}
+                            />
                         </FormGroup>
-
-                        <FormGroup controlId="formBasicPassword">
+                        <FormGroup>
                             <FormLabel>Password</FormLabel>
-                            <FormControl type="password" placeholder="Password" />
+                            <FormControl
+                                type="password"
+                                name="password"
+                                placeholder="Password"
+                                value={this.state.password}
+                                onChange={this.change}
+                            />
                         </FormGroup>
-                        <Button variant="info" type="button" className="px-5">
+                        <Button variant="info" type="button" className="px-5" onClick={this.login} >
                             Login
                         </Button>
                     </Form>
@@ -46,4 +70,4 @@ class Login extends Component {
     }
 }
 
-export default Login;
+export default withRouter(Login);
