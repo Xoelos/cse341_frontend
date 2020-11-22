@@ -1,5 +1,4 @@
-import React from "react";
-import {Component} from "react";
+import React, {Component} from "react";
 import {withRouter} from "react-router-dom";
 
 // SCSS
@@ -9,12 +8,15 @@ import './Home.scss';
 import axios from "axios";
 // import _ from 'lodash';
 
+// Components
+
 // Bootstrap
 import Row from "react-bootstrap/Row";
 import Col from "react-bootstrap/Col";
 import Button from "react-bootstrap/Button";
 import LS from "../../models/LocalStorageModel";
 import _ from "lodash";
+import PlayingCard from "../../components/playingCard";
 
 const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
@@ -23,19 +25,19 @@ class Home extends Component {
         super(props);
 
         this.state = {
-            deck: null,
+            deck: [],
         }
     }
 
     createDeck = () => {
-        const token = LS.get() || null;
+        const {token} = LS.get() || null;
         axios.post(`${BASE_URL}/api/game`,
             {
                 id: this.props.userId,
                 withCredentials: true
             },
             {
-                headers: { Authorization: `Bearer ${ token }` },
+                headers: {Authorization: `Bearer ${token}`},
             }
         ).then(res => {
             console.log(res.data);
@@ -56,6 +58,13 @@ class Home extends Component {
             <Row>
                 <Col xs="12">
                     <Button onClick={this.createDeck}>Create new game</Button>
+                </Col>
+                <Col xs="12">
+                    <span className="deck">
+                        {this.state.deck.map((card, index) =>
+                            <PlayingCard card={card} key={index}>Test</PlayingCard>
+                          )}
+                    </span>
                 </Col>
             </Row>
         )
