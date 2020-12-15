@@ -15,6 +15,7 @@ import OnLoad from "./middleware/OnLoad";
 // Components
 import About from './views/About/About';
 import Home from './views/Home/Home';
+import Game from './views/Game/Game';
 import Login from "./views/Login/Login";
 import Register from "./views/Register/Register";
 
@@ -91,14 +92,18 @@ class App extends Component {
                                                className="ml-0 ml-md-5 my-auto"><NavLink>About</NavLink></LinkContainer>
                             </span>
                             {authed ? (
-                                <span onClick={this.logout}>
-                                    <NavLink className="my-auto">Logout</NavLink>
-                                </span>
+                                <>
+                                    <span onClick={this.logout}>
+                                        <NavLink className="my-auto">Logout</NavLink>
+                                    </span>
+                                </>
                             ) : (<>
-                                    <LinkContainer to="/login"><NavLink
-                                        className="my-auto">Login</NavLink></LinkContainer>
-                                    <LinkContainer to="/register"><NavLink
-                                        className="my-auto">Register</NavLink></LinkContainer>
+                                    <LinkContainer to="/login">
+                                        <NavLink className="my-auto">Login</NavLink>
+                                    </LinkContainer>
+                                    <LinkContainer to="/register">
+                                        <NavLink className="my-auto">Register</NavLink>
+                                    </LinkContainer>
                                 </>
                             )}
                         </Nav>
@@ -124,7 +129,13 @@ class App extends Component {
                                          register={this.register}
                             />
                             <PrivateRoute exact path={['/home', '/']} component={Home} authed={this.state.authed}
-                                          toast={this.toast} userId={this.state.user.id}/>
+                                          toast={this.toast} />
+                            <PrivateRoute exact path='/game'
+                                          component={Game}
+                                          authed={this.state.authed}
+                                          toast={this.toast}
+                                          userId={this.state.user.id}
+                            />
                         </Container>
                     </React.Fragment>
                 </Switch>

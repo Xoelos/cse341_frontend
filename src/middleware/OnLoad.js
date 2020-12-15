@@ -9,7 +9,10 @@ export default class OnLoad {
     static getUser = (toast) => {
         const { token, exp } = LS.get();
 
-        if (!token || !LS.validate(exp)) {
+        if (!token) {
+            toast({show: false, title: "", message: "", variety: ""});
+            return false;
+        } else if (!LS.validate(exp)) {
             toast({show: true, title: "Logged out!", message: "You have been logged out due to inactivity!", variety: 'danger'});
             return false;
         }

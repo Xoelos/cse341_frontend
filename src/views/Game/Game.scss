@@ -1,0 +1,28 @@
+.cards {
+  min-height: 212.25px;
+}
+
+.hand {
+  display: flex;
+  flex-direction: column;
+  min-height: 38px;
+
+  > *:not(:first-child) {
+    margin-top: -160px !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .hand {
+    flex-direction: row;
+
+    > *:not(:first-child) {
+      margin-top: auto !important;
+      margin-left: -120px !important;
+    }
+
+    > * {
+      width: 212.25px;
+    }
+  }
+}

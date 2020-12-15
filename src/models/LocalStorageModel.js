@@ -11,7 +11,7 @@ export default class LocalStorageModel {
     static set = (token) => {
         const {iat} = jwt_decode(token);
         localStorage.setItem('Authorization', token);
-        localStorage.setItem('AuthorizationExp', iat + (5));
+        localStorage.setItem('AuthorizationExp', iat + (60 * 60));
     }
 
     static unset = () => {
