@@ -83,7 +83,7 @@ class Game extends Component {
                     war: false,
                     winner: undefined
                 });
-            }, 1000 * 0)
+            }, 1000 * 6)
         } else if (cards.length === 2 || cards.length === 1) {
             this.setState({
                 cards,
@@ -105,7 +105,7 @@ class Game extends Component {
             this.state.cards.length === 2
                 ? this.setState({showFirst: true})
                 : this.setState({showFirst: true, showLast: true, showWar: true});
-        }, 1000 * 0);
+        }, 1000 * 2);
 
 
         setTimeout(() => {
@@ -119,7 +119,7 @@ class Game extends Component {
             } else {
                 this.setState({winner: (playerId === this.props.userId), draw: false})
             }
-        }, 1000 * 0);
+        }, 1000 * 4);
     }
 
     gameover = () => {

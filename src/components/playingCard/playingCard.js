@@ -25,7 +25,7 @@ class PlayingCard extends Component {
                 <CardImg className="mt-auto" src={ `${BASE_URL}${this.props.image}` } />
             </Card>
             <Card className="card m-0" onClick={this.handleClick}>
-                <CardImg className="mt-auto" src={ `${BASE_URL}/images/gray_back.jpg`} />
+                <CardImg className="mt-auto" src={ `assets/gray_back.jpg`} />
             </Card>
             </ReactCardFlip>
         )
